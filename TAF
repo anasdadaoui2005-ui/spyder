@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+
+# 1. Définition de la fonction et de l'intervalle
+a = 1.0
+b = 3.0
+f = lambda x: x**2
+f_prime = lambda x: 2 * x  # Dérivée de f(x) = x^2
+
+# 2. Calcul de la pente de la sécante (m)
+fa = f(a)
+fb = f(b)
+m_secante = (fb - fa) / (b - a)
+print(f"Pente de la sécante (m) : {m_secante}")
+
+# 3. Recherche du point c tel que f'(c) = m
+# Nous cherchons la racine de l'équation: f'(x) - m = 0
+# Pour notre exemple: 2x - 4 = 0
+
+# Utilisation de fsolve pour trouver la racine numériquement
+equation_a_resoudre = lambda x: f_prime(x) - m_secante
+c_trouve = fsolve(equation_a_resoudre, x0=(a+b)/2)[0]
+
+print(f"Point c trouvé par résolution numérique : {c_trouve:.4f}")
+print(f"Vérification : f'(c) = {f_prime(c_trouve):.4f} (doit être égal à m)")
+
+# 4. Visualisation (Optionnel mais utile)
+x_val = np.linspace(a - 0.5, b + 0.5, 200)
+y_val = f(x_val)
+# Calcul de l'équation de la sécante passant par (a, fa) avec la pente m
+secante = lambda x: m_secante * (x - a) + fa
+
+# Point C garanti par le TAF
+y_c = f(c_trouve)
+
+plt.figure(figsize=(8, 5))
+plt.plot(x_val, y_val, label=r'$f(x) = x^2$', color='blue')
+plt.plot(x_val, secante(x_val), label=f'Sécante (pente={m_secante:.2f})', linestyle='--', color='red')
+plt.plot([a, b], [fa, fb], 'o', color='red', label='Points (a, f(a)) et (b, f(b))')
+plt.title("Illustration du Théorème des Accroissements Finis")
+plt.xlabel("x")
+plt.ylabel("f(x)")
+plt.grid(True)
+plt.legend()
+plt.show()
